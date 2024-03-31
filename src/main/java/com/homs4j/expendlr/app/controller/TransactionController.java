@@ -3,6 +3,7 @@ package com.homs4j.expendlr.app.controller;
 import com.homs4j.expendlr.app.dto.transaction.PostTransaction;
 import com.homs4j.expendlr.app.dto.transaction.PutTransaction;
 import com.homs4j.expendlr.app.dto.transaction.TransactionDTO;
+import com.homs4j.expendlr.app.enums.TransactionStatus;
 import com.homs4j.expendlr.app.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,21 @@ public class TransactionController {
         return updated != null ?
                 ResponseEntity.status(HttpStatus.OK).body(updated) :
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @DeleteMapping("/{transactionId}")
+    public ResponseEntity<String> deleteTransaction(@PathVariable("transactionId") String transactionId){
+        return transactionService.deleteById(transactionId) > 0 ?
+                ResponseEntity.noContent().build():
+                ResponseEntity.badRequest().build();
+    }
+
+    @PatchMapping("/{transactionId}")
+    public ResponseEntity<String> patchTransactionStatus(@PathVariable String transactionId,@RequestParam("status") String status){
+        int result = transactionService.updateTransactionStatus(transactionId, TransactionStatus.valueOf(status));
+        return result > 0 ?
+                ResponseEntity.ok().build():
+                ResponseEntity.badRequest().build();
     }
 
 }

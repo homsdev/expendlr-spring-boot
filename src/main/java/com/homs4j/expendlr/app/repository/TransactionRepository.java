@@ -1,5 +1,6 @@
 package com.homs4j.expendlr.app.repository;
 
+import com.homs4j.expendlr.app.enums.TransactionStatus;
 import com.homs4j.expendlr.app.model.Transaction;
 
 import java.sql.Timestamp;
@@ -11,4 +12,6 @@ public interface TransactionRepository {
     public Optional<Transaction> update(Transaction transaction);
     public List<Transaction> findAllByDate(Timestamp start, Timestamp end, String accountId);
     public Optional<Transaction> findById(String id);
+    public int deleteById(String id);
+    public int updateTransactionStatus(String id, TransactionStatus status);
 }
