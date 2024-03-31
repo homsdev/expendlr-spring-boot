@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface TransactionRepository {
     public Optional<Transaction> save(Transaction transaction);
     public Optional<Transaction> update(Transaction transaction);
-    public List<Transaction> findAllByDate(Timestamp start, Timestamp end);
+    public List<Transaction> findAllByDate(Timestamp start, Timestamp end, String accountId);
     public Optional<Transaction> findById(String id);
 }

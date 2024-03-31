@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `planned_payment`;
 DROP TABLE IF EXISTS `transaction`;
 DROP TABLE IF EXISTS `account`;
 
-CREATE TABLE `user`(
+CREATE TABLE `app_user`(
     `user_id` VARCHAR(60) NOT NULL,
     `name` VARCHAR(60) NOT NULL,
     `last_name` VARCHAR(60) NOT NULL,
@@ -27,24 +27,10 @@ CREATE TABLE `account`(
     `alias` VARCHAR(60) NOT NULL,
     `balance` DECIMAL(10,2) NOT NULL,
     `created_on` TIMESTAMP NOT NULL,
-    `updated_on` TIMESTAMP NOT NULL,
+    `updated_on` TIMESTAMP,
     `user_id` VARCHAR(60) NOT NULL,
     PRIMARY KEY(`account_id`),
-    FOREIGN KEY(`user_id`) REFERENCES `user`(`user_id`)
-);
-
-CREATE TABLE `planned_payment`(
-    `planned_payment_id` VARCHAR(60) NOT NULL,
-    `title` VARCHAR(60) NOT NULL,
-    `amount` VARCHAR(60) NOT NULL,
-    `start_date` TIMESTAMP NOT NULL,
-    `end_date` TIMESTAMP NOT NULL,
-    `interval` ENUM('DAY','WEEK','MONTH','YEAR') NOT NULL,
-    `category_id` VARCHAR(60) NOT NULL,
-    `account_id` VARCHAR(60) NOT NULL,
-    PRIMARY KEY(`planned_payment_id`),
-    FOREIGN KEY(`category_id`) REFERENCES `category`(`category_id`),
-    FOREIGN KEY(`account_id`) REFERENCES `account`(`account_id`)
+    FOREIGN KEY(`user_id`) REFERENCES `app_user`(`user_id`)
 );
 
 CREATE TABLE `transaction`(
@@ -55,6 +41,7 @@ CREATE TABLE `transaction`(
     `amount` DECIMAL(10,2) NOT NULL,
     `account_id` VARCHAR(60) NOT NULL,
     `category_id` VARCHAR(60) NOT NULL,
+    `status` ENUM('PENDANT','PAID') DEFAULT 'PENDANT',
     PRIMARY KEY(`transaction_id`),
     FOREIGN KEY(`account_id`) REFERENCES `account`(`account_id`),
     FOREIGN KEY(`category_id`) REFERENCES `category`(`category_id`)

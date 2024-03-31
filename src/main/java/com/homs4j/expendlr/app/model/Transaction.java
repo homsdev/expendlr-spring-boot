@@ -1,5 +1,6 @@
 package com.homs4j.expendlr.app.model;
 
+import com.homs4j.expendlr.app.enums.TransactionStatus;
 import com.homs4j.expendlr.app.enums.TransactionType;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class Transaction {
     private BigDecimal amount;
     private Account account;
     private Category category;
+    private TransactionStatus status;
 }

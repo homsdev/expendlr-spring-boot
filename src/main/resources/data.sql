@@ -1,0 +1,20 @@
+INSERT INTO `app_user` VALUES('bbc24b89-442f-4875-958d-81624c00bd2b','John','Doe','JohnDoe123','john_doe@mail.com','5547863215','password');
+
+INSERT INTO `category` VALUES('5d86595a-3c81-497c-82bc-51716774ca67','Transportation','F1F1F1');
+INSERT INTO `category` VALUES('0fde2545-2d74-4d7c-ba6f-105935dca3a5','Food','F1F1F2');
+INSERT INTO `category` VALUES('e109eaff-6819-4832-876d-1cf636e2a596','Services','F1F1F3');
+
+INSERT INTO `account`
+VALUES('b97e990e-bf5b-44fb-962b-e2cf37ee0498','main',10000.00,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'bbc24b89-442f-4875-958d-81624c00bd2b');
+
+INSERT INTO `transaction`
+VALUES('5daadf01-5a4f-4328-853a-f3bf4b76a851','GamePass','EXPENSE','2024-02-29T16:44:28',249.50,'b97e990e-bf5b-44fb-962b-e2cf37ee0498','e109eaff-6819-4832-876d-1cf636e2a596','PENDANT');
+
+INSERT INTO `transaction`
+VALUES('b24ccdac-12bf-4741-8b63-f600997a529c','PSPlus','EXPENSE','2024-02-14T16:44:28',650.50,'b97e990e-bf5b-44fb-962b-e2cf37ee0498','e109eaff-6819-4832-876d-1cf636e2a596','PENDANT');
+
+INSERT INTO `transaction`
+VALUES('a9825dce-cca3-4fdd-8750-66a971eaeeed','Nintendo Switch','EXPENSE','2024-01-06T16:44:28',8475.50,'b97e990e-bf5b-44fb-962b-e2cf37ee0498','e109eaff-6819-4832-876d-1cf636e2a596','PENDANT');
+
+INSERT INTO `transaction`
+VALUES('2d372ed9-2ee2-48c9-81b2-9c2efb4319b2','Car','EXPENSE','2024-01-01T16:44:28',8475.50,'b97e990e-bf5b-44fb-962b-e2cf37ee0498','e109eaff-6819-4832-876d-1cf636e2a596','PENDANT');
