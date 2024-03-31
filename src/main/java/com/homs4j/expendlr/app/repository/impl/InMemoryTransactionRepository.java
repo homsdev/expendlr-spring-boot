@@ -1,5 +1,6 @@
 package com.homs4j.expendlr.app.repository.impl;
 
+import com.homs4j.expendlr.app.enums.TransactionStatus;
 import com.homs4j.expendlr.app.mapper.rowmappers.TransactionRowMapper;
 import com.homs4j.expendlr.app.model.Transaction;
 import com.homs4j.expendlr.app.repository.TransactionRepository;
@@ -63,7 +64,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         queryParams.put("start", start);
         queryParams.put("end", end);
         queryParams.put("id", accountId);
-        return jdbcTemplate.query(SQL, queryParams, new TransactionRowMapper());//TODO: Add categories to output
+        return jdbcTemplate.query(SQL, queryParams, new TransactionRowMapper());
     }
 
     @Override
@@ -73,5 +74,22 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         queryParams.put("id", id);
         List<Transaction> result = jdbcTemplate.query(SQL, queryParams, new TransactionRowMapper());
         return result.stream().findFirst();
+    }
+
+    @Override
+    public int deleteById(String id) {
+        String SQL = "DELETE FROM transaction WHERE transaction_id = :id";
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("id",id);
+        return jdbcTemplate.update(SQL, queryParams);
+    }
+
+    @Override
+    public int updateTransactionStatus(String id, TransactionStatus status) {
+        String SQL = "UPDATE transaction SET status = :status WHERE transaction_id = :id";
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("status",status.toString());
+        queryParams.put("id",id);
+        return jdbcTemplate.update(SQL,queryParams);
     }
 }

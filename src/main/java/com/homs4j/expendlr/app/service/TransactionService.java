@@ -7,8 +7,10 @@ import com.homs4j.expendlr.app.enums.TransactionStatus;
 import com.homs4j.expendlr.app.enums.TransactionType;
 import com.homs4j.expendlr.app.mapper.dtomapper.TransactionDTOMapper;
 import com.homs4j.expendlr.app.model.Account;
+import com.homs4j.expendlr.app.model.Category;
 import com.homs4j.expendlr.app.model.Transaction;
 import com.homs4j.expendlr.app.repository.AccountRepository;
+import com.homs4j.expendlr.app.repository.CategoryRepository;
 import com.homs4j.expendlr.app.repository.TransactionRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,14 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final CategoryRepository categoryRepository;
     private final TransactionDTOMapper transactionDTOMapper;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, TransactionDTOMapper transactionDTOMapper) {
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, CategoryRepository categoryRepository, TransactionDTOMapper transactionDTOMapper) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
+        this.categoryRepository = categoryRepository;
         this.transactionDTOMapper = transactionDTOMapper;
     }
 
@@ -84,8 +88,11 @@ public class TransactionService {
     }
 
     public List<TransactionDTO> findAllByUserAndMonth(Timestamp start, Timestamp end, String accountId) {
-        //TODO:Retrieve all category information
         List<Transaction> allByDate = transactionRepository.findAllByDate(start, end, accountId);
+        allByDate.forEach(transaction->{
+            Category category = categoryRepository.findById(transaction.getCategory().getCategoryId()).orElseThrow(NullPointerException::new);
+            transaction.setCategory(category);
+        });
         return allByDate.stream().map(transactionDTOMapper::toTransactionDTO).collect(Collectors.toList());
     }
 
@@ -93,6 +100,36 @@ public class TransactionService {
         return transactionRepository.findById(id).map(transactionDTOMapper::toTransactionDTO).orElse(null);
     }
 
-    //TODO: Implement transaction deletion
+    public int deleteById(String transactionId){
+        return transactionRepository.deleteById(transactionId);
+    }
+
+    public int updateTransactionStatus(String transactionId,TransactionStatus status){
+        Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(NullPointerException::new);
+        Account account = accountRepository.findById(transaction.getAccount().getAccountId()).orElseThrow(NullPointerException::new);
+
+        if(transaction.getStatus().equals(status)){
+            throw new NullPointerException();
+        }
+        BigDecimal adjustedAccountBalance = getAdjustedBalance(status, account, transaction);
+        account.setBalance(adjustedAccountBalance);
+        accountRepository.update(account).orElseThrow(NullPointerException::new);
+        return transactionRepository.updateTransactionStatus(transactionId,status);
+    }
+
+    private static BigDecimal getAdjustedBalance(TransactionStatus status, Account account, Transaction transaction) {
+        BigDecimal adjustedAccountBalance = account.getBalance();
+        if(transaction.getType()==TransactionType.INCOME){
+            adjustedAccountBalance = status.equals(TransactionStatus.PAID) ?
+                    account.getBalance().add(transaction.getAmount()):
+                    account.getBalance().subtract(transaction.getAmount());
+        }
+        if(transaction.getType()==TransactionType.EXPENSE){
+            adjustedAccountBalance = status.equals(TransactionStatus.PAID) ?
+                    account.getBalance().subtract(transaction.getAmount()):
+                    account.getBalance().add(transaction.getAmount());
+        }
+        return adjustedAccountBalance;
+    }
 
 }
