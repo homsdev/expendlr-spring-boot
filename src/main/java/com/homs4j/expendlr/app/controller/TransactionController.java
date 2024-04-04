@@ -25,33 +25,25 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<TransactionDTO> postTransaction(@RequestBody PostTransaction dto) {
         TransactionDTO saved = transactionService.save(dto);
-        return saved != null ?
-                ResponseEntity.status(HttpStatus.CREATED).body(saved) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{transactionId}")
     public ResponseEntity<TransactionDTO> putTransaction(@PathVariable("transactionId") String transactionId,
                                                          @RequestBody PutTransaction dto) {
         TransactionDTO updated = transactionService.update(dto, transactionId);
-        return updated != null ?
-                ResponseEntity.status(HttpStatus.OK).body(updated) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
     @DeleteMapping("/{transactionId}")
-    public ResponseEntity<String> deleteTransaction(@PathVariable("transactionId") String transactionId){
-        return transactionService.deleteById(transactionId) > 0 ?
-                ResponseEntity.noContent().build():
-                ResponseEntity.badRequest().build();
+    public ResponseEntity<String> deleteTransaction(@PathVariable("transactionId") String transactionId) {
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{transactionId}")
-    public ResponseEntity<String> patchTransactionStatus(@PathVariable String transactionId,@RequestParam("status") String status){
-        int result = transactionService.updateTransactionStatus(transactionId, TransactionStatus.valueOf(status));
-        return result > 0 ?
-                ResponseEntity.ok().build():
-                ResponseEntity.badRequest().build();
+    public ResponseEntity<String> patchTransactionStatus(@PathVariable String transactionId, @RequestParam("status") String status) {
+        transactionService.updateTransactionStatus(transactionId, TransactionStatus.valueOf(status));
+        return ResponseEntity.ok("Transaction status successfully changed");
     }
 
 }

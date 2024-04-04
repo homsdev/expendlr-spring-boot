@@ -26,24 +26,24 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getById(@PathVariable("id") String id) {
         CategoryDTO result = categoryService.findById(id);
-        return result != null ? ResponseEntity.ok().body(result) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping()
     public ResponseEntity<List<CategoryDTO>> getAll() {
         List<CategoryDTO> result = categoryService.findAll();
-        return result.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping()
     public ResponseEntity<CategoryDTO> postCategory(@RequestBody PostCategory dto) {
         CategoryDTO result = categoryService.save(dto);
-        return result != null ? ResponseEntity.status(HttpStatus.CREATED).body(result) : ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(result) ;
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> putCategory(@PathVariable("id") String id, @RequestBody PutCategory dto) {
         CategoryDTO result = categoryService.update(dto, id);
-        return result != null ? ResponseEntity.status(HttpStatus.OK).body(result) : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

@@ -3,6 +3,9 @@ package com.homs4j.expendlr.app.service;
 import com.homs4j.expendlr.app.dto.category.CategoryDTO;
 import com.homs4j.expendlr.app.dto.category.PostCategory;
 import com.homs4j.expendlr.app.dto.category.PutCategory;
+import com.homs4j.expendlr.app.exception.EntityNotCreatedException;
+import com.homs4j.expendlr.app.exception.EntityNotFoundException;
+import com.homs4j.expendlr.app.exception.EntityNotUpdatedException;
 import com.homs4j.expendlr.app.mapper.dtomapper.CategoryDTOMapper;
 import com.homs4j.expendlr.app.model.Category;
 import com.homs4j.expendlr.app.repository.CategoryRepository;
@@ -29,11 +32,13 @@ public class CategoryService {
 
     public CategoryDTO findById(String categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
-        return category.map(dtoMapper::toDTO).orElse(null);//TODO: Implement Exception
+        return category.map(dtoMapper::toDTO)
+                .orElseThrow(()-> new EntityNotFoundException("Category information not found"));
     }
 
     public List<CategoryDTO> findAll() {
         List<Category> all = categoryRepository.findAll();
+        if(all.isEmpty()) throw new EntityNotFoundException("No categories information was found");
         return all.stream().map(dtoMapper::toDTO).collect(Collectors.toList());
     }
 
@@ -41,13 +46,15 @@ public class CategoryService {
         Category category = dtoMapper.toCategory(dto);
         category.setCategoryId(UUID.randomUUID().toString());
         Optional<Category> saved = categoryRepository.save(category);
-        return saved.map(dtoMapper::toDTO).orElse(null);//TODO: Implement Exception
+        return saved.map(dtoMapper::toDTO)
+                .orElseThrow(()-> new EntityNotCreatedException("Failed to save new category information"));
     }
 
     public CategoryDTO update(PutCategory dto,String categoryId) {
         Category category = dtoMapper.toCategory(dto);
         category.setCategoryId(categoryId);
         Optional<Category> updated = categoryRepository.update(category);
-        return updated.map(dtoMapper::toDTO).orElse(null);//TODO: Implement Exception
+        return updated.map(dtoMapper::toDTO)
+                .orElseThrow(()-> new EntityNotUpdatedException("Failed to update category information"));
     }
 }

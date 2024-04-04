@@ -33,25 +33,19 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<AccountDTO> postAccount(@RequestBody PostAccount dto) {
         AccountDTO savedAccount = accountService.saveAccount(dto);
-        return savedAccount != null ?
-                ResponseEntity.ok(savedAccount) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.ok(savedAccount);
     }
 
     @PutMapping("/{accountId}")
     private ResponseEntity<AccountDTO> putAccount(@PathVariable("accountId") String accountId, @RequestBody PutAccount dto) {
         AccountDTO updatedAccount = accountService.updateAccount(dto, accountId);
-        return updatedAccount != null ?
-                ResponseEntity.ok(updatedAccount) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.ok(updatedAccount);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AccountDTO> getByAccountId(@PathVariable("id") String accountId) {
         AccountDTO account = accountService.findById(accountId);
-        return account != null ?
-                ResponseEntity.ok(account) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/{accountId}/transaction")
@@ -59,9 +53,7 @@ public class AccountController {
                                                                            @RequestParam String startDate,
                                                                            @RequestParam String endDate) {
         List<TransactionDTO> allByUserAndMonth = transactionService.findAllByUserAndMonth(Timestamp.valueOf(startDate), Timestamp.valueOf(endDate), accountId);
-        return !allByUserAndMonth.isEmpty() ?
-                ResponseEntity.ok(allByUserAndMonth) :
-                ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(allByUserAndMonth);
     }
 
 }

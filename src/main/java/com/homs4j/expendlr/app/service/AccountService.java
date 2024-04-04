@@ -3,6 +3,9 @@ package com.homs4j.expendlr.app.service;
 import com.homs4j.expendlr.app.dto.account.AccountDTO;
 import com.homs4j.expendlr.app.dto.account.PostAccount;
 import com.homs4j.expendlr.app.dto.account.PutAccount;
+import com.homs4j.expendlr.app.exception.EntityNotCreatedException;
+import com.homs4j.expendlr.app.exception.EntityNotFoundException;
+import com.homs4j.expendlr.app.exception.EntityNotUpdatedException;
 import com.homs4j.expendlr.app.mapper.dtomapper.AccountDTOMapper;
 import com.homs4j.expendlr.app.model.Account;
 import com.homs4j.expendlr.app.repository.AccountRepository;
@@ -36,24 +39,28 @@ public class AccountService {
         account.setAccountId(UUID.randomUUID().toString());
         account.setCreatedOn(createdAt);
         Optional<Account> saved = accountRepository.save(account);
-        return saved.map(dtoMapper::toAccountDTO).orElse(null);
+        return saved.map(dtoMapper::toAccountDTO)
+                .orElseThrow(() -> new EntityNotCreatedException("Failed to save account information"));
     }
 
-    public AccountDTO updateAccount(PutAccount dto,String accountId) {
+    public AccountDTO updateAccount(PutAccount dto, String accountId) {
         Account accountToUpdate = dtoMapper.toAccount(dto);
         accountToUpdate.setAccountId(accountId);
         Optional<Account> updated = accountRepository.update(accountToUpdate);
-        return updated.map(dtoMapper::toAccountDTO).orElse(null);
+        return updated.map(dtoMapper::toAccountDTO)
+                .orElseThrow(() -> new EntityNotUpdatedException("Failed to update account information"));
     }
 
     public List<AccountDTO> getAllByUserId(String userId) {
         List<Account> accountList = accountRepository.findAllByUserId(userId);
+        if (accountList.isEmpty()) throw new EntityNotFoundException("No accounts were found");
         return accountList.stream().map(dtoMapper::toAccountDTO).collect(Collectors.toList());
     }
 
     public AccountDTO findById(String accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
-        return account.map(dtoMapper::toAccountDTO).orElse(null);
+        return account.map(dtoMapper::toAccountDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find account information"));
     }
 
 }
