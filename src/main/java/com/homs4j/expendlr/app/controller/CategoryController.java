@@ -5,6 +5,7 @@ import com.homs4j.expendlr.app.dto.category.CategoryDTO;
 import com.homs4j.expendlr.app.dto.category.PostCategory;
 import com.homs4j.expendlr.app.dto.category.PutCategory;
 import com.homs4j.expendlr.app.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,9 @@ public class CategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<CategoryDTO> postCategory(@RequestBody PostCategory dto) {
+    public ResponseEntity<CategoryDTO> postCategory(@Valid @RequestBody PostCategory dto) {
         CategoryDTO result = categoryService.save(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(result) ;
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/{id}")
